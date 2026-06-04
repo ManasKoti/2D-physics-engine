@@ -1,0 +1,61 @@
+# ============================================================
+# Visual Studio / C++ build artifacts
+# ============================================================
+
+# Visual Studio IDE state (per-user, machine-specific)
+.vs/
+
+# Build output directories
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww]in32/
+[Aa][Rr][Mm]/
+[Aa][Rr][MM]64/
+
+# Compiled / intermediate build files
+*.obj
+*.exe
+*.dll
+*.pdb
+*.ilk
+*.idb
+*.exp
+*.lib
+*.log
+*.tlog
+*.recipe
+*.lastbuildstate
+*.iobj
+*.ipdb
+
+# Visual Studio user-specific project files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.db-shm
+*.VC.db-wal
+*.VC.opendb
+*.vsidx
+
+# ============================================================
+# NuGet packages (restorable from packages.config)
+# ============================================================
+packages/
+*.nupkg
+*.signature.p7s
+
+# ============================================================
+# OS / editor noise
+# ============================================================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+*~
+*.swp
