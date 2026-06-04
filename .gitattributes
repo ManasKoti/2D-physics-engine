@@ -1,0 +1,9 @@
+# Exclude third-party / library code from GitHub's language stats.
+# These are not authored by this project, so they shouldn't count
+# toward the repo's detected language.
+
+PhysicsEngine/PhysicsEngine/lib/**  linguist-vendored
+packages/**                         linguist-vendored
+
+# Treat the project's own headers as C++ (Linguist sometimes guesses C).
+*.h linguist-language=C++
