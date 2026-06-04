@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "Physics/Constants.h"
 
 bool Application::IsRunning() {
     return running;
@@ -10,7 +11,8 @@ bool Application::IsRunning() {
 void Application::Setup() {
     running = Graphics::OpenWindow();
 
-    // TODO: setup objects in the scene
+	particle = new Particle(50, 100, 1.0);
+    particle->radius = 4;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -35,7 +37,40 @@ void Application::Input() {
 // Update function (called several times per second to update objects)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Update() {
-    // TODO: update all objects in the scene
+	static int timePreviousFrame;
+	int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - timePreviousFrame);
+	if (timeToWait > 0) {
+		SDL_Delay(timeToWait);
+	}
+
+	float deltaTime = (SDL_GetTicks() - timePreviousFrame) / 1000.0f;
+    if (deltaTime > 0.0333) {
+		deltaTime = 0.0333;
+    }
+
+	timePreviousFrame = SDL_GetTicks();
+
+    particle->acceleration.x = 2.0 * PIXELS_PER_METER;
+	particle->acceleration.y = 9.8 * PIXELS_PER_METER;
+	particle->velocity += particle->acceleration * deltaTime;
+	particle->position += particle->velocity * deltaTime;
+
+    if (particle->position.x - particle->radius < 0) {
+        particle->position.x = particle->radius;
+        particle->velocity.x *= -0.9;
+    }
+    else if (particle->position.x + particle->radius > Graphics::Width()) {
+        particle->position.x = Graphics::Width() - particle->radius;
+        particle->velocity.x *= -0.9;
+    }
+	if (particle->position.y - particle->radius < 0) {
+		particle->position.y = particle->radius;
+		particle->velocity.y *= -0.9;
+	}
+	else if (particle->position.y + particle->radius > Graphics::Height()) {
+		particle->position.y = Graphics::Height() - particle->radius;
+		particle->velocity.y *= -0.9;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,7 +78,7 @@ void Application::Update() {
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Render() {
     Graphics::ClearScreen(0xFF056263);
-    Graphics::DrawFillCircle(200, 200, 40, 0xFFFFFFFF);
+    Graphics::DrawFillCircle(particle->position.x, particle->position.y, particle->radius, 0xFFFFFFFF);
     Graphics::RenderFrame();
 }
 
@@ -51,7 +86,7 @@ void Application::Render() {
 // Destroy function to delete objects and close the window
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Destroy() {
-    // TODO: destroy all objects in the scene
+	delete particle;
 
     Graphics::CloseWindow();
 }
