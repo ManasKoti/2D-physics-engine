@@ -52,8 +52,7 @@ void Application::Update() {
 
     particle->acceleration.x = 2.0 * PIXELS_PER_METER;
 	particle->acceleration.y = 9.8 * PIXELS_PER_METER;
-	particle->velocity += particle->acceleration * deltaTime;
-	particle->position += particle->velocity * deltaTime;
+    particle->Integrate(deltaTime);
 
     if (particle->position.x - particle->radius < 0) {
         particle->position.x = particle->radius;
