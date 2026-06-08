@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "Physics/Constants.h"
+#include "Physics/Force.h"
 
 bool Application::IsRunning() {
     return running;
@@ -11,13 +12,18 @@ bool Application::IsRunning() {
 void Application::Setup() {
     running = Graphics::OpenWindow();
 
-	Particle* smallBall = new Particle(50, 100, 1.0);
-    smallBall->radius = 4;
-	particles.push_back(smallBall);
+	//Particle* smallBall = new Particle(50, 100, 1.0);
+ //   smallBall->radius = 4;
+	//particles.push_back(smallBall);
 
 	//Particle* bigBall = new Particle(200, 100, 3.0);
 	//bigBall->radius = 12;
 	//particles.push_back(bigBall);
+
+	liquid.x = 0;
+	liquid.y = Graphics::Height() / 2;
+	liquid.w = Graphics::Width();
+	liquid.h = Graphics::Height() / 2;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,6 +58,15 @@ void Application::Input() {
             if (event.key.keysym.sym == SDLK_LEFT)
                 pushForce.x = 0;
             break;
+        case SDL_MOUSEBUTTONDOWN:
+            if (event.button.button == SDL_BUTTON_LEFT) {
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                Particle* particle = new Particle(x, y, 1.0);
+                particle->radius = 5;
+                particles.push_back(particle);
+            }
+            break;
         }
     }
 }
@@ -73,21 +88,17 @@ void Application::Update() {
 
     timePreviousFrame = SDL_GetTicks();
 
-	//wind force
-    for (auto particle : particles) {
-        Vec2 wind = Vec2(1.0 * PIXELS_PER_METER, 0.0);
-        particle->AddForce(wind);
-    }
-
-    //weight force
+	//forces
     for (auto particle : particles) {
         Vec2 weight = Vec2(0.0, particle->mass * 9.8 * PIXELS_PER_METER);
         particle->AddForce(weight);
-    }
 
-    //push force
-    for (auto particle : particles) {
         particle->AddForce(pushForce);
+
+		if (particle->position.y >= liquid.y) {
+			Vec2 drag = Force::GenerateDragForce(*particle, 0.03);
+			particle->AddForce(drag);
+		}
     }
 
     for (auto particle : particles) {
@@ -119,7 +130,8 @@ void Application::Update() {
 // Render function (called several times per second to draw objects)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Render() {
-    Graphics::ClearScreen(0xFF056263);
+    Graphics::ClearScreen(0xFF000000);
+    Graphics::DrawFillRect(liquid.x + liquid.w / 2, liquid.y + liquid.h / 2, liquid.w, liquid.h, 0xFFD47406);
     for (auto particle : particles) {
         Graphics::DrawFillCircle(particle->position.x, particle->position.y, particle->radius, 0xFFFFFFFF);
     }
